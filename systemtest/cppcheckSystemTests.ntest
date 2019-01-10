@@ -1,0 +1,293 @@
+# -*-Perl-*-
+
+# cppNcssSystemTests.ntest -
+#
+# ECCppCheck
+#
+# Copyright (c) 2005-2010 Electric Cloud, Inc.
+# All rights reserved
+
+use strict;
+use warnings;
+use ECTest;
+use ECSelenium;
+
+ 
+# system tests
+
+
+require "$::gTestFileDir/cppcheck-common.ntest";
+
+
+$::grunMavenCreated = 0;
+$::gProjectImported = 0;
+$::gtestProjectName = 'CppCheckTestProject';
+
+my $outcome = "";
+
+sub importProject() {
+    assertOK($::N->import(
+             { file =>"$::gTestFileDir/cppCheckSystemTests.xml",
+               path  => "/projects/CppCheckTestProject",
+               force => 1
+             } ), 'import runCommandLine');
+   
+    assertOK($::N->getProcedure($::gtestProjectName, 'runCppCheckUsingChecks'),
+    'runCppCheckUsingChecks procedure doesn\'t exist');
+    
+    assertOK($::N->getProcedure($::gtestProjectName, 'runCppCheckUsingLog'),
+    'runCppCheckUsingLog procedure doesn\'t exist');
+    
+    assertOK($::N->getProcedure($::gtestProjectName, 'runCppCheckUsingVerboseAndForce'),
+    'runCppCheckUsingVerboseAndForce procedure doesn\'t exist');
+    
+    assertOK($::N->getProcedure($::gtestProjectName, 'runCppCheckWithRequiredOptions'),
+    'runCppCheckWithRequiredOptions procedure doesn\'t exist');
+    
+    assertOK($::N->getProcedure($::gtestProjectName, 'runCppCheckWithXMLLog'),
+    'runCppCheckWithXMLLog procedure doesn\'t exist');    
+    
+    $::gProjectImported = 1;
+}
+
+sub doSetup() {
+
+    if(! $::gProjectImported) {
+        importProject();
+    }
+
+   
+}
+ 
+ntest "runCppCheckUsingChecks", {}, sub {
+      
+      doSetup();
+      
+      # run test job
+     
+      my $xpath = $::N->runProcedure($::gtestProjectName, 
+              {procedureName => "runCppCheckUsingChecks",
+              pollInterval  => '1',
+              timeout => 600,
+                   actualParameter => [
+                  
+                  ]
+      });
+          
+       
+      # make sure it finished
+      my $jobId = 0;
+      my $status = '';
+      
+      assertOK($xpath, 'runProcedure has errors');
+      if ($xpath) {
+          $jobId  = $xpath->findvalue("//jobId");
+          $status = $xpath->findvalue("//status");
+          $outcome = $xpath->findvalue("//outcome");
+  
+          assertTrue($jobId && $jobId ne "",'valid job id');
+          assertEq('completed',$status,"job $jobId complete");
+  
+          #abort if job did not finish
+          if ($status ne "completed") {
+              assertOK($::N->abortJob($jobId, {force => 1}));
+          }
+      }
+
+      # get the job details
+      $xpath = $::N->getJobDetails($jobId);
+   
+      # get the value of the commands lines
+      my $commandLine = $xpath->findvalue("//property[propertyName='commandLine']/value");
+      my $workingDir = $xpath->findvalue("//property[propertyName='workingdir']/value");
+
+      assertEq($commandLine, 'cppcheck --enable=unusedFunctions "E:/xerces-c-3.1.1/src"', 
+           "command line doesn't match expected output");
+
+  };
+  
+ntest "runCppCheckUsingLog", {}, sub {
+      
+      doSetup();
+      
+      # run test job
+     
+      my $xpath = $::N->runProcedure($::gtestProjectName, 
+              {procedureName => "runCppCheckUsingLog",
+              pollInterval  => '1',
+              timeout => 600,
+                   actualParameter => [
+                  
+                  ]
+      });
+          
+       
+      # make sure it finished
+      my $jobId = 0;
+      my $status = '';
+      
+      assertOK($xpath, 'runProcedure has errors');
+      if ($xpath) {
+          $jobId  = $xpath->findvalue("//jobId");
+          $status = $xpath->findvalue("//status");
+          $outcome = $xpath->findvalue("//outcome");
+  
+          assertTrue($jobId && $jobId ne "",'valid job id');
+          assertEq('completed',$status,"job $jobId complete");
+  
+          #abort if job did not finish
+          if ($status ne "completed") {
+              assertOK($::N->abortJob($jobId, {force => 1}));
+          }
+      }
+
+      # get the job details
+      $xpath = $::N->getJobDetails($jobId);
+   
+      # get the value of the commands lines
+      my $commandLine = $xpath->findvalue("//property[propertyName='commandLine']/value");
+
+      assertEq($commandLine, 'cppcheck "E:/xerces-c-3.1.1/src" > "mylog.txt"', 
+           " command line doesn't match expected output");
+
+  };
+  
+  ntest "runCppCheckUsingVerboseAndForce", {}, sub {
+      
+      doSetup();
+      
+      # run test job
+     
+      my $xpath = $::N->runProcedure($::gtestProjectName, 
+              {procedureName => "runCppCheckUsingVerboseAndForce",
+              pollInterval  => '1',
+              timeout => 600,
+                   actualParameter => [
+                  
+                  ]
+      });
+          
+       
+      # make sure it finished
+      my $jobId = 0;
+      my $status = '';
+      
+      assertOK($xpath, 'runProcedure has errors');
+      if ($xpath) {
+          $jobId  = $xpath->findvalue("//jobId");
+          $status = $xpath->findvalue("//status");
+          $outcome = $xpath->findvalue("//outcome");
+  
+          assertTrue($jobId && $jobId ne "",'valid job id');
+          assertEq('completed',$status,"job $jobId complete");
+  
+          #abort if job did not finish
+          if ($status ne "completed") {
+              assertOK($::N->abortJob($jobId, {force => 1}));
+          }
+      }
+
+      # get the job details
+      $xpath = $::N->getJobDetails($jobId);
+   
+      # get the value of the commands lines
+      my $commandLine = $xpath->findvalue("//property[propertyName='commandLine']/value");
+
+      assertEq($commandLine, 'cppcheck -f -v "E:/xerces-c-3.1.1/src"', 
+           " command line doesn't match expected output");
+
+  };
+  
+  ntest "runCppCheckWithRequiredOptions", {}, sub {
+      
+      doSetup();
+      
+      # run test job
+     
+      my $xpath = $::N->runProcedure($::gtestProjectName, 
+              {procedureName => "runCppCheckWithRequiredOptions",
+              pollInterval  => '1',
+              timeout => 600,
+                   actualParameter => [
+                  
+                  ]
+      });
+          
+       
+      # make sure it finished
+      my $jobId = 0;
+      my $status = '';
+      
+      assertOK($xpath, 'runProcedure has errors');
+      
+      if ($xpath) {
+          $jobId  = $xpath->findvalue("//jobId");
+          $status = $xpath->findvalue("//status");
+          $outcome = $xpath->findvalue("//outcome");
+  
+          assertTrue($jobId && $jobId ne "",'valid job id');
+          assertEq('completed',$status,"job $jobId complete");
+  
+          #abort if job did not finish
+          if ($status ne "completed") {
+              assertOK($::N->abortJob($jobId, {force => 1}));
+          }
+      }
+
+      # get the job details
+      $xpath = $::N->getJobDetails($jobId);
+   
+      # get the value of the commands lines
+      my $commandLine = $xpath->findvalue("//property[propertyName='commandLine']/value");
+
+      assertEq($commandLine, 'cppcheck "E:/xerces-c-3.1.1/src"', 
+           " command line doesn't match expected output");
+
+  };
+
+  ntest "runCppCheckWithXMLLog", {}, sub {
+      
+      doSetup();
+      
+      # run test job
+     
+      my $xpath = $::N->runProcedure($::gtestProjectName, 
+              {procedureName => "runCppCheckWithXMLLog",
+              pollInterval  => '1',
+              timeout => 600,
+                   actualParameter => [
+                  
+                  ]
+      });
+          
+       
+      # make sure it finished
+      my $jobId = 0;
+      my $status = "";
+      
+      assertOK($xpath, 'runProcedure has errors');
+      
+      if ($xpath) {
+          $jobId  = $xpath->findvalue("//jobId");
+          $status = $xpath->findvalue("//status");
+          $outcome = $xpath->findvalue("//outcome");
+  
+          assertTrue($jobId && $jobId ne "",'valid job id');
+          assertEq('completed',$status,"job $jobId complete");
+  
+          #abort if job did not finish
+          if ($status ne "completed") {
+              assertOK($::N->abortJob($jobId, {force => 1}));
+          }
+      }
+
+      # get the job details
+      $xpath = $::N->getJobDetails($jobId);
+   
+      # get the value of the commands lines
+      my $commandLine = $xpath->findvalue("//property[propertyName='commandLine']/value");
+
+      assertEq($commandLine, 'cppcheck --xml "E:/xerces-c-3.1.1/src"', 
+           " command line doesn't match expected output");
+
+  };

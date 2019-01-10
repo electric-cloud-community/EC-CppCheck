@@ -1,0 +1,86 @@
+<editor>
+    <help>/commander/pages/@PLUGIN_NAME@/@PLUGIN_KEY@_help?s=Administration&amp;ss=Plugins#runCppcheck</help>
+    <formElement>
+        <type>entry</type>
+        <label>CppCheck installation path:</label>
+        <property>installpath</property>
+        <required>1</required>
+        <value>cppcheck</value>
+        <documentation>Path where CppCheck script is located, default will invoke cppcheck.</documentation>
+    </formElement>
+    <formElement>
+        <type>textarea</type>
+        <label>Target to analyze:</label>
+        <property>target</property>
+        <required>1</required>
+        <documentation>Indicate Cppcheck's target(s). Cppcheck supports directories or source code files and both must be properly double quoted. Examples: This analyzes all contents of the folder myprojectroot -"E:/myprojectroot/" This analyzes two single files - "E:/myprojectroot/file1.cpp" "E:/myprojectroot/file2.cpp".</documentation>
+    </formElement>
+    <formElement>
+        <type>entry</type>
+        <label>Enable additional checks:</label>
+        <property>enable</property>
+        <required>0</required>
+        <documentation>Enable additional checks. The available ids are: * all - enable all checks * exceptNew - exception safety when using new * exceptRealloc - exception safety when reallocating * style - Check coding style * unusedFunctions - check for unused functions Several ids can be given if you separate them with commas.</documentation>
+    </formElement>
+    <formElement>
+        <type>checkbox</type>
+        <label>Verbosity:</label>
+        <property>verbose</property>
+        <checkedValue>1</checkedValue>
+        <uncheckedValue>0</uncheckedValue>
+        <required>0</required>
+        <documentation>If checked, this enables extra verbosity when running the analysis.</documentation>
+    </formElement>
+    <formElement>
+        <type>checkbox</type>
+        <label>Quiet mode:</label>
+        <property>quiet</property>
+        <checkedValue>1</checkedValue>
+        <uncheckedValue>0</uncheckedValue>
+        <required>0</required>
+        <documentation>If checked, this enables error-logging only mode in the
+    analysis.</documentation>
+    </formElement>
+    <formElement>
+        <type>checkbox</type>
+        <label>Force files:</label>
+        <property>force</property>
+        <checkedValue>1</checkedValue>
+        <uncheckedValue>0</uncheckedValue>
+        <required>0</required>
+        <documentation>If checked, this forces checking on files that have too
+    many configurations.</documentation>
+    </formElement>
+    <formElement>
+        <type>entry</type>
+        <label>Report file path:</label>
+        <property>outputfile</property>
+        <required>0</required>
+        <documentation>Indicate the filename of the output report.</documentation>
+    </formElement>
+    <formElement>
+        <type>checkbox</type>
+        <label>Output file as XML:</label>
+        <property>usexml</property>
+        <checkedValue>1</checkedValue>
+        <uncheckedValue>0</uncheckedValue>
+        <required>0</required>
+        <documentation>If checked, this prints the error log as an XML
+    file.</documentation>
+    </formElement>
+    <formElement>
+        <type>textarea</type>
+        <label>Additional commands:</label>
+        <property>commands</property>
+        <required>0</required>
+        <documentation>Provide any custom commands for the Cppcheck call.</documentation>
+    </formElement>
+    <formElement>
+        <type>entry</type>
+        <label>Working directory:</label>
+        <property>workingdir</property>
+        <required>0</required>
+        <value></value>
+        <documentation>Indicate the desired working directory. Leave blank to use the default workspace.</documentation>
+    </formElement>
+</editor>
